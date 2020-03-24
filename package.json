@@ -1,0 +1,50 @@
+{
+  "name": "capacitor-msal",
+  "version": "0.1.0",
+  "description": "msal plugin for capacitor",
+  "main": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "clean": "rimraf ./dist",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "author": "prototype.berlin GmbH",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/core": "latest"
+  },
+  "devDependencies": {
+    "rimraf": "3.0.2",
+    "typescript": "3.8.3",
+    "@capacitor/ios": "1.5.1",
+    "@capacitor/android": "1.5.1"
+  },
+  "files": [
+    "dist/",
+    "ios/",
+    "android/",
+    "CapacitorMsal.podspec"
+  ],
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "native"
+  ],
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "none"
+  },
+  "bugs": {
+    "url": "none/issues"
+  }
+}
