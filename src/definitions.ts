@@ -7,4 +7,5 @@ declare module "@capacitor/core" {
 
 export interface MsalPlugin {
   getAccessToken(options: { clientId: string, authority: string, scopes: string[] }): Promise<{ accessToken: string }>;
+  signOut(): Promise<void>;
 }
