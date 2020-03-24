@@ -1,7 +1,7 @@
 
   Pod::Spec.new do |s|
     s.name = 'CapacitorMsalB2c'
-    s.version = '0.1.1'
+    s.version = '0.1.3'
     s.summary = 'msal plugin for capacitor'
     s.license = 'MIT'
     s.homepage = 'none'
