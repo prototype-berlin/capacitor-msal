@@ -1,4 +1,4 @@
-# capacitor-msal
+# capacitor-msal-b2c
 
 ## iOS
 
