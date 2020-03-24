@@ -33,25 +33,25 @@ public class Msal: CAPPlugin {
                 call.reject("Unable to create authority URL")
                 return
             }
-            
+                        
             do {
-            
-            let authority = try MSALAADAuthority(url: authorityURL)
-            let msalConfiguration = MSALPublicClientApplicationConfig(clientId: clientId, redirectUri: nil, authority: authority)
-            self.applicationContext = try MSALPublicClientApplication(configuration: msalConfiguration)
-            self.webViewParamaters = MSALWebviewParameters(parentViewController: self.bridge.viewController)
+                let authority = try MSALB2CAuthority(url: authorityURL)
+                let msalConfiguration = MSALPublicClientApplicationConfig(clientId: clientId, redirectUri: nil, authority: authority)
+                msalConfiguration.knownAuthorities = [authority]
+                self.applicationContext = try MSALPublicClientApplication(configuration: msalConfiguration)
+                self.webViewParamaters = MSALWebviewParameters(parentViewController: self.bridge.viewController)
             } catch {
                 call.reject("\(error)")
                 return
             }
-                
+                            
             guard let currentAccount = self.currentAccount(call) else {
                 // We check to see if we have a current logged in account.
                 // If we don't, then we need to sign someone in.
                 acquireTokenInteractively()
                 return
             }
-            
+                        
             acquireTokenSilently(currentAccount)
         }
         
@@ -94,7 +94,6 @@ public class Msal: CAPPlugin {
             
             let parameters = MSALSilentTokenParameters(scopes: scopes!, account: account)
             applicationContext.acquireTokenSilent(with: parameters) { (result, error) in
-                
                 if let error = error {
                     
                     let nsError = error as NSError
@@ -113,7 +112,10 @@ public class Msal: CAPPlugin {
                             return
                         }
                     }
-                     return
+                    print(error)
+                    
+                    self.callPlugin?.reject("error acquiring token silently", error)
+                    return
                 }
                 guard let result = result else {
                     
@@ -128,17 +130,34 @@ public class Msal: CAPPlugin {
         }
         
         func acquireTokenInteractively() {
-             guard let applicationContext = self.applicationContext else { return }
-             guard let webViewParameters = self.webViewParamaters else { return }
+            guard let applicationContext = self.applicationContext else { return }
+            guard let webViewParameters = self.webViewParamaters else { return }
 
             let parameters = MSALInteractiveTokenParameters(scopes: scopes!, webviewParameters: webViewParameters)
             parameters.promptType = .selectAccount;
              
-             applicationContext.acquireToken(with: parameters) { (result, error) in
-                 guard let result = result else {
-                     
+            applicationContext.acquireToken(with: parameters) { (result, error) in
+                if let error = error {
+                    let nsError = error as NSError
+                    
+                    if (nsError.domain == MSALErrorDomain) {
+                        
+                        if (nsError.code == MSALError.userCanceled.rawValue) {
+                            
+                            self.callPlugin?.reject("user_canceled", nil, ["userCanceled":true])
+                            return
+                        }
+                    }
+                    print(error)
+                    
+                    self.callPlugin?.reject("error acquiring token interactively", error)
                     return
-                 }
+                }
+                
+                guard let result = result else {
+
+                    return
+                }
                  
                 self.accessToken = result.accessToken
                 self.callPlugin?.resolve([
