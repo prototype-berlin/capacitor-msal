@@ -1,5 +1,5 @@
 {
-  "name": "capacitor-msal",
+  "name": "capacitor-msal-b2c",
   "version": "0.1.0",
   "description": "msal plugin for capacitor",
   "main": "dist/esm/index.js",
@@ -46,5 +46,8 @@
   },
   "bugs": {
     "url": "none/issues"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }
