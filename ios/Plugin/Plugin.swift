@@ -45,7 +45,7 @@ public class Msal: CAPPlugin {
             return
         }
                         
-        guard let currentAccount = self.currentAccount(call) else {
+        guard let currentAccount = self.currentAccount() else {
             // We check to see if we have a current logged in account.
             // If we don't, then we need to sign someone in.
             acquireTokenInteractively()
@@ -55,24 +55,72 @@ public class Msal: CAPPlugin {
         acquireTokenSilently(currentAccount)
     }
     
-    func currentAccount(_ call: CAPPluginCall) -> MSALAccount? {
+    @objc func getAccessTokenSilently(_ call: CAPPluginCall) {
+        self.callPlugin = call
         
-        guard let applicationContext = self.applicationContext else { return nil }
-        
-        // We retrieve our current account by getting the first account from cache
-        // In multi-account applications, account should be retrieved by home account identifier or username instead
+        guard let clientId = call.options["clientId"] as? String else {
+            call.reject("Must provide a clientId")
+            return
+        }
+       
+        guard let authorityUrl = call.options["authority"] as? String else {
+            call.reject("Must provide an authority")
+            return
+        }
+       
+        scopes = (self.callPlugin?.get("scopes", [String].self)) ?? []
+
+        guard let authorityURL = URL(string: authorityUrl) else {
+            call.reject("Unable to create authority URL")
+            return
+        }
         
         do {
-            
-            let cachedAccounts = try applicationContext.allAccounts()
-            
-            if !cachedAccounts.isEmpty {
-                return cachedAccounts.first
-            }
-        } catch let error as NSError {
-            call.reject("Didn't find any accounts in cache: \(error)")
+            let authority = try MSALB2CAuthority(url: authorityURL)
+            let msalConfiguration = MSALPublicClientApplicationConfig(clientId: clientId, redirectUri: nil, authority: authority)
+            msalConfiguration.knownAuthorities = [authority]
+            self.applicationContext = try MSALPublicClientApplication(configuration: msalConfiguration)
+        } catch {
+            call.reject("\(error)")
+            return
         }
-        return nil
+        
+        guard let applicationContext = self.applicationContext else { return }
+        
+        guard let currentAccount = self.currentAccount() else {
+            self.callPlugin?.resolve()
+            return
+        }
+        
+        let parameters = MSALSilentTokenParameters(scopes: scopes!, account: currentAccount)
+        applicationContext.acquireTokenSilent(with: parameters) { (result, error) in
+            if let error = error {
+                
+                let nsError = error as NSError
+                
+                if (nsError.domain == MSALErrorDomain) {
+                    
+                    if (nsError.code == MSALError.interactionRequired.rawValue) {
+                        
+                        self.callPlugin?.resolve()
+                        return
+                    }
+                }
+                print(error)
+                
+                self.callPlugin?.reject("error acquiring token silently", error)
+                return
+            }
+            guard let result = result else {
+                
+                return
+            }
+            
+            self.accessToken = result.accessToken
+            self.callPlugin?.resolve([
+                "accessToken": self.accessToken
+            ])
+        }
     }
     
     func acquireTokenSilently(_ account : MSALAccount!) {

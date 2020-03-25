@@ -5,5 +5,6 @@
 // each method the plugin supports using the CAP_PLUGIN_METHOD macro.
 CAP_PLUGIN(Msal, "Msal",
            CAP_PLUGIN_METHOD(getAccessToken, CAPPluginReturnPromise);
+           CAP_PLUGIN_METHOD(getAccessTokenSilently, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(signOut, CAPPluginReturnPromise);
 )
