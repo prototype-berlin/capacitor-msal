@@ -2,7 +2,7 @@
 import { WebPlugin } from '@capacitor/core';
 import { Configuration, UserAgentApplication } from 'msal/lib-es6';
 
-import { MsalPlugin } from './definitions';
+import { MsalPlugin, AuthResponse, Options } from './definitions';
 
 export class MsalWeb extends WebPlugin implements MsalPlugin {
   private userAgentApplication: UserAgentApplication;
@@ -14,7 +14,7 @@ export class MsalWeb extends WebPlugin implements MsalPlugin {
     });
   }
 
-  public async getAccessToken(options: { clientId: string, authority: string, scopes: string[] }): Promise<{ accessToken: string }> {
+  public async getAccessToken(options: Options): Promise<AuthResponse> {
     this.userAgentApplication = new UserAgentApplication(this.getClientConfiguration(options));
 
     try {
@@ -26,7 +26,7 @@ export class MsalWeb extends WebPlugin implements MsalPlugin {
     }
   }
 
-  public async getAccessTokenSilently(options: { clientId: string, authority: string, scopes: string[] }): Promise<{ accessToken?: string }> {
+  public async getAccessTokenSilently(options: Options): Promise<AuthResponse> {
     this.userAgentApplication = new UserAgentApplication(this.getClientConfiguration(options));
 
     try {
@@ -44,7 +44,7 @@ export class MsalWeb extends WebPlugin implements MsalPlugin {
     this.userAgentApplication.logout();
   }
 
-  private getClientConfiguration(options: { clientId: string, authority: string, scopes: string[] }): Configuration {
+  private getClientConfiguration(options: Options): Configuration {
     return {
       auth: {
         clientId: options.clientId,
