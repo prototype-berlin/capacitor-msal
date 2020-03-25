@@ -13,7 +13,8 @@
   "author": "prototype.berlin GmbH",
   "license": "MIT",
   "dependencies": {
-    "@capacitor/core": "latest"
+    "@capacitor/core": "1.5.1",
+    "msal": "1.2.2"
   },
   "devDependencies": {
     "rimraf": "3.0.2",
