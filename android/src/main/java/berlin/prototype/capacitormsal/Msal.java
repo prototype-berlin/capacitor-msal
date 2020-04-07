@@ -39,7 +39,7 @@ public class Msal extends Plugin {
     public void getAccessToken(final PluginCall call) {
 
         String clientId = call.getString("clientId");
-        String authority = call.getString("authority");
+        final String authority = call.getString("authority");
         String redirectUri = "msauth://com.munichre.aviationapp";
         List<String> scopes = null;
         try {
@@ -60,6 +60,7 @@ public class Msal extends Plugin {
                         Log.d(TAG, "--- PCA Created");
 
                         AcquireTokenParameters parameters = new AcquireTokenParameters.Builder()
+                                .fromAuthority(authority)
                                 .startAuthorizationFromActivity(getActivity())
                                 .withScopes(finalScopes)
                                 .withPrompt(Prompt.LOGIN)
