@@ -5,6 +5,12 @@
 !.vscode/launch.json
 !.vscode/extensions.json
 
+android/.idea/*
+android/build/generated/*
+android/build/intermediates/*
+android/.gradle/*
+**/.DS_Store
+
 # Node.js
 # Logs
 logs
