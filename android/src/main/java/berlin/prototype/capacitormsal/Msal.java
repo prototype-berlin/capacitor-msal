@@ -1,10 +1,8 @@
 package berlin.prototype.capacitormsal;
 
 import android.Manifest;
-import android.nfc.Tag;
 import android.util.Log;
 
-import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -13,25 +11,15 @@ import com.getcapacitor.PluginMethod;
 import com.microsoft.identity.client.AcquireTokenParameters;
 import com.microsoft.identity.client.AcquireTokenSilentParameters;
 import com.microsoft.identity.client.AuthenticationCallback;
-import com.microsoft.identity.client.IAccount;
 import com.microsoft.identity.client.IAuthenticationResult;
 import com.microsoft.identity.client.IPublicClientApplication;
 import com.microsoft.identity.client.ISingleAccountPublicClientApplication;
 import com.microsoft.identity.client.Prompt;
 import com.microsoft.identity.client.PublicClientApplication;
-import com.microsoft.identity.client.ISingleAccountPublicClientApplication;
-import com.microsoft.identity.client.PublicClientApplication;
-import com.microsoft.identity.client.SilentAuthenticationCallback;
-import com.microsoft.identity.client.exception.MsalClientException;
 import com.microsoft.identity.client.exception.MsalException;
-import com.microsoft.identity.client.exception.MsalServiceException;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.File;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.List;
 
 @NativePlugin(
@@ -41,16 +29,8 @@ import java.util.List;
         }
 )
 public class Msal extends Plugin {
-    final String TAG = "MyActivity";
+    final String TAG = "CapacitorMsal";
 
-    @PluginMethod()
-    public void echo(PluginCall call) {
-        String value = call.getString("value");
-
-        JSObject ret = new JSObject();
-        ret.put("value", value);
-        call.success(ret);
-    }
 
     @PluginMethod()
     public void getAccessToken(final PluginCall call) {

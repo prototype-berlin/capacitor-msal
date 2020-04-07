@@ -222,8 +222,8 @@
     <orderEntry type="library" name="Gradle: com.google.guava:listenablefuture:1.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: net.minidev:accessors-smart:1.2@jar" level="project" />
     <orderEntry type="library" name="Gradle: org.ow2.asm:asm:5.0.4@jar" level="project" />
-    <orderEntry type="library" name="Gradle: com.microsoft.identity.client:msal:1.0.1@aar" level="project" />
-    <orderEntry type="library" name="Gradle: com.microsoft.identity:common:1.0.13@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.microsoft.identity.client:msal:1.4.0@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.microsoft.identity:common:2.0.2@aar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.appcompat:appcompat:1.1.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.browser:browser:1.2.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.cursoradapter:cursoradapter:1.0.0@aar" level="project" />
