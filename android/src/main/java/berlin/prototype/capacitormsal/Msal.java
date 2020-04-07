@@ -3,6 +3,8 @@ package berlin.prototype.capacitormsal;
 import android.Manifest;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -30,6 +32,7 @@ import java.util.List;
 )
 public class Msal extends Plugin {
     final String TAG = "CapacitorMsal";
+    private ISingleAccountPublicClientApplication publicClientApplication;
 
 
     @PluginMethod()
@@ -47,12 +50,13 @@ public class Msal extends Plugin {
 
         final List<String> finalScopes = scopes;
 
-        PublicClientApplication.createSingleAccountPublicClientApplication(
+         PublicClientApplication.createSingleAccountPublicClientApplication(
                 getContext(),
                 R.raw.msal_config,
                 new IPublicClientApplication.ISingleAccountApplicationCreatedListener() {
                     @Override
                     public void onCreated(ISingleAccountPublicClientApplication pca) {
+                        publicClientApplication = pca;
                         Log.d(TAG, "--- PCA Created");
 
                         AcquireTokenParameters parameters = new AcquireTokenParameters.Builder()
@@ -154,11 +158,25 @@ public class Msal extends Plugin {
 
 
     @PluginMethod()
-    public void signOut(PluginCall call) {
-        String value = call.getString("value");
+    public void signOut(final PluginCall call) {
+        if (publicClientApplication == null) {
+            call.reject("Not logged in");
+            return;
+        }
 
-        JSObject ret = new JSObject();
-        ret.put("value", value);
-        call.success(ret);
+        publicClientApplication.signOut(new ISingleAccountPublicClientApplication.SignOutCallback() {
+            @Override
+            public void onSignOut() {
+                JSObject ret = new JSObject();
+                ret.put("success", true);
+                call.success(ret);
+            }
+            @Override
+            public void onError(@NonNull MsalException exception){
+                JSObject ret = new JSObject();
+                ret.put("exception", exception);
+                call.reject(ret.toString());
+            }
+        });
     }
 }
